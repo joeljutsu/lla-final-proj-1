@@ -81,6 +81,11 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
         return STATUS_ERROR;
     }
 
+    if (headerOut == NULL)
+    {
+        return -1;
+    }
+
     struct dbheader_t *dbheader = calloc(1, sizeof(struct dbheader_t));
 
     if (dbheader == NULL)
