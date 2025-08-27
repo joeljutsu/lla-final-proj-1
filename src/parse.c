@@ -23,34 +23,29 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
         return STATUS_ERROR;
     }
     int realcount = dbheader->count;
-    printf("output_file::realcount: %d\n", realcount);
-    printf("output_file::sizeof employee_t:  %ld\n", sizeof(struct employee_t));
-    printf("output_file::filesize computed: %ld\n", sizeof(struct dbheader_t) + sizeof(struct employee_t) * realcount);
 
     dbheader->magic = htonl(dbheader->magic);
     if (dbheader->magic == -1)
     {
         return -1;
     }
-    printf("output_file:: dbheader->magic: %d\n", dbheader->magic);
 
-    printf("1)output_file:: dbheader->filesize: %d\n", dbheader->filesize);
     dbheader->filesize = htonl(sizeof(struct dbheader_t) + sizeof(struct employee_t) * realcount);
-    printf("2)output_file:: dbheader->filesize: %d\n", dbheader->filesize);
+
     if (dbheader->filesize == -1)
     {
         return -1;
     }
 
     dbheader->count = htons(dbheader->filesize);
-    printf("output_file:: dbheader->count: %d\n", dbheader->count);
+
     if (dbheader->count == -1)
     {
         return -1;
     }
-    printf("1)output_file:: dbheader->version: %d\n", dbheader->version);
+
     dbheader->version = htons(dbheader->version);
-    printf("2)output_file:: dbheader->version: %d\n", dbheader->version);
+
     if (dbheader->version == -1)
     {
         return -1;
@@ -103,30 +98,28 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
     }
 
     dbheader->version = ntohs(dbheader->version);
-    printf("validate_db_header:: dbheader->version: %d\n", dbheader->version);
+
     if (dbheader->version == -1)
     {
         return -1;
     }
 
     dbheader->count = ntohs(dbheader->count);
-    printf("validate_db_header:: dbheader->count: %d\n", dbheader->count);
+
     if (dbheader->count == -1)
     {
         return -1;
     }
 
-    printf("1)validate_db_header:: dbheader->magic: %d\n", dbheader->magic);
     dbheader->magic = ntohl(dbheader->magic); // dbheader->magic; //
-    printf("2)validate_db_header:: dbheader->magic: %d\n", dbheader->magic);
+
     if (dbheader->magic == -1)
     {
         return -1;
     }
-    // printf("true/false? %d\n", dbheader->magic != HEADER_MAGIC);
 
     dbheader->filesize = ntohl(dbheader->filesize);
-    printf("validate_db_header:: dbheader->filesize: %d\n", dbheader->filesize);
+
     if (dbheader->filesize == -1)
     {
         return -1;
@@ -152,9 +145,6 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
         printf("error fstat");
         return STATUS_ERROR;
     }
-    printf("dbstat st_size: %ld\n", dbstat.st_size);
-
-    printf("validate_db_header filesize?: %d\n", dbheader->filesize);
 
     if (dbheader->filesize != dbstat.st_size)
     {
@@ -163,7 +153,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
         return STATUS_ERROR;
     }
     *headerOut = dbheader;
-    printf("validate_db_header() SUCCESS\n");
+
     return STATUS_SUCCESS;
 }
 
@@ -185,7 +175,6 @@ int create_db_header(struct dbheader_t **header_out)
     header->filesize = sizeof(struct dbheader_t);
 
     *header_out = header;
-    printf("create_db_header() SUCCESS\n");
 
     return STATUS_SUCCESS;
 }

@@ -35,10 +35,9 @@ int main(int argc, char *argv[])
         {
         case 'n':
             newfile = true;
-            // printf("run with n flag\n");
+
             break;
         case 'f':
-            // printf("run w f flag\n");
             filepath = optarg;
             break;
         case '?':
@@ -87,7 +86,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    printf("main header version: %d\n", header->version);
     if (header == NULL)
     {
         printf("HEADER NULL!!!\n");
