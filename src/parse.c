@@ -15,9 +15,10 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
         printf("Got a bad FD from the user\n");
         return STATUS_ERROR;
     }
+    int realcount = dbheader->count;
 
     dbheader->magic = htonl(dbheader->magic);
-    dbheader->filesize = htonl(dbheader->filesize);
+    dbheader->filesize = htonl(sizeof(struct dbheader_t) + sizeof(struct employee_t) * realcount);
     dbheader->count = htons(dbheader->count);
     dbheader->version = htons(dbheader->version);
 
@@ -77,9 +78,6 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
     }
 
     *headerOut = dbheader;
-
-    printf("returning STATUS_SUCCESS from validate_db_header()\n");
-
     return STATUS_SUCCESS;
 }
 
