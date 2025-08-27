@@ -25,7 +25,7 @@ int create_db_file(char *filename)
 
     return fd;
 }
-int open_db(char *filename)
+int open_db_file(char *filename)
 {
     int fd = open(filename, O_RDWR, 0644);
     if (fd == -1)

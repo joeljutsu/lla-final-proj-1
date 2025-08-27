@@ -26,10 +26,10 @@ int main(int argc, char *argv[])
         {
         case 'n':
             newfile = true;
-            printf("run with n flag\n");
+            // printf("run with n flag\n");
             break;
         case 'f':
-            printf("run w f flag\n");
+            // printf("run w f flag\n");
             filepath = optarg;
             break;
         case '?':
@@ -50,6 +50,20 @@ int main(int argc, char *argv[])
     if (newfile)
     {
         dbfd = create_db_file(filepath);
+        if (dbfd == STATUS_ERROR)
+        {
+            printf("Unable to create database file\n");
+            return -1;
+        }
+    }
+    else
+    {
+        dbfd = open_db_file(filepath);
+        if (dbfd == STATUS_ERROR)
+        {
+            printf("Unable to open database file\n");
+            return -1;
+        }
     }
 
     return 0;
