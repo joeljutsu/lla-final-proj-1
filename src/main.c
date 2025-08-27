@@ -88,6 +88,15 @@ int main(int argc, char *argv[])
     }
 
     printf("main header version: %d\n", header->version);
+    if (header == NULL)
+    {
+        printf("HEADER NULL!!!\n");
+        return -1;
+    }
+    else
+    {
+        printf("HEADER NOT NULL!!!\n");
+    }
     if (output_file(dbfd, header, NULL) == STATUS_ERROR)
     {
         close(dbfd);

@@ -41,8 +41,16 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
     dbheader->version = htons(dbheader->version);
     printf("2)output_file:: dbheader->version: %d\n", dbheader->version);
 
-    lseek(fd, 0, SEEK_SET);
-    write(fd, dbheader, sizeof(struct dbheader_t));
+    if (lseek(fd, 0, SEEK_SET) == -1)
+    {
+        printf("error lseek!");
+        return STATUS_ERROR;
+    }
+    if (write(fd, dbheader, sizeof(struct dbheader_t)) == -1)
+    {
+        printf("error write!");
+        return STATUS_ERROR;
+    }
 
     close(fd);
 
@@ -103,7 +111,11 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
     }
 
     struct stat dbstat = {0};
-    fstat(fd, &dbstat);
+    if (fstat(fd, &dbstat) == -1)
+    {
+        printf("error fstat");
+        return STATUS_ERROR;
+    }
     printf("dbstat st_size: %ld\n", dbstat.st_size);
 
     printf("validate_db_header filesize?: %d\n", dbheader->filesize);
