@@ -18,6 +18,7 @@ void print_usage(char *argv[])
 
 int main(int argc, char *argv[])
 {
+    printf("\n:::::START RUN:::::\n");
     char *filepath = NULL;
     bool newfile = false;
     int c = 0;
