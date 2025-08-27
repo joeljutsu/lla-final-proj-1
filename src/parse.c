@@ -17,14 +17,23 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
         printf("Got a bad FD from the user\n");
         return STATUS_ERROR;
     }
+    if (dbheader == NULL)
+    {
+        printf("got null dbheader!");
+        return STATUS_ERROR;
+    }
     int realcount = dbheader->count;
     printf("output_file::realcount: %d\n", realcount);
     printf("output_file::sizeof employee_t:  %ld\n", sizeof(struct employee_t));
-    printf("output_files::filesize computed: %ld\n", sizeof(struct dbheader_t) + sizeof(struct employee_t) * realcount);
+    printf("output_file::filesize computed: %ld\n", sizeof(struct dbheader_t) + sizeof(struct employee_t) * realcount);
 
     dbheader->magic = htonl(dbheader->magic);
     printf("output_file:: dbheader->magic: %d\n", dbheader->magic);
+
+    printf("1)output_file:: dbheader->filesize: %d\n", dbheader->filesize);
     dbheader->filesize = htonl(sizeof(struct dbheader_t) + sizeof(struct employee_t) * realcount);
+    printf("2)output_file:: dbheader->filesize: %d\n", dbheader->filesize);
+
     dbheader->count = htons(dbheader->filesize);
     printf("output_file:: dbheader->count: %d\n", dbheader->count);
 
