@@ -24,6 +24,11 @@ int main(int argc, char *argv[])
     int c = 0;
     int dbfd = -1;
     struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
+    if (header == NULL)
+    {
+        printf("WHOOPS");
+        return -1;
+    }
     while ((c = getopt(argc, argv, "nf:")) != -1)
     {
         switch (c)
