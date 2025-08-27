@@ -27,6 +27,7 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
     lseek(fd, 0, SEEK_SET);
     write(fd, dbheader, sizeof(struct dbheader_t));
     printf("output_file() STATUS_SUCCESS");
+    close(fd);
 
     return STATUS_SUCCESS;
 }
