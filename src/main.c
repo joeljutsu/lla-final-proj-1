@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     char *filepath = NULL;
     bool newfile = false;
     int c = 0;
-
+    int dbfd = -1;
     while ((c = getopt(argc, argv, "nf:")) != -1)
     {
         switch (c)
@@ -45,6 +45,11 @@ int main(int argc, char *argv[])
         printf("Filepath is a required argument\n");
         print_usage(argv);
         return 0;
+    }
+
+    if (newfile)
+    {
+        dbfd = create_db_file(filepath);
     }
 
     return 0;
