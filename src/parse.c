@@ -76,7 +76,9 @@ int validate_db_header(int fd, struct dbheader_t **header_out)
         return STATUS_ERROR;
     }
 
-    header_out = &header;
+    *header_out = header;
+
+    printf("returning STATUS_SUCCESS from validate_db_header()\n");
 
     return STATUS_SUCCESS;
 }
@@ -95,7 +97,6 @@ int create_db_header(struct dbheader_t **header_out)
     header->filesize = sizeof(struct dbheader_t);
 
     *header_out = header;
-    free(header);
 
     return STATUS_SUCCESS;
 }
