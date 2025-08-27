@@ -18,11 +18,19 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
         return STATUS_ERROR;
     }
     int realcount = dbheader->count;
+    printf("realcount: %d\n", realcount);
+    printf("sizeof employee_t:  %ld\n", sizeof(struct employee_t));
+    printf("filesize computed: %ld\n", sizeof(struct dbheader_t) + sizeof(struct employee_t) * realcount);
 
     dbheader->magic = htonl(dbheader->magic);
+    printf("output_file dbheader->magic: %d\n", dbheader->magic);
     dbheader->filesize = htonl(sizeof(struct dbheader_t) + sizeof(struct employee_t) * realcount);
     dbheader->count = htons(dbheader->filesize);
+    printf("output_file dbheader->count: %d\n", dbheader->count);
+
+    printf("output_file dbheader->version: %d\n", dbheader->version);
     dbheader->version = htons(dbheader->version);
+    printf("output_file dbheader->version: %d\n", dbheader->version);
 
     lseek(fd, 0, SEEK_SET);
     write(fd, dbheader, sizeof(struct dbheader_t));
@@ -50,26 +58,31 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
     }
     lseek(fd, 0, SEEK_SET);
 
-    if (read(fd, dbheader, sizeof(struct dbheader_t) != sizeof(struct dbheader_t)))
+    if (read(fd, dbheader, sizeof(struct dbheader_t)) != sizeof(struct dbheader_t))
     {
+        printf("ERROR!!!");
         perror("read");
         free(dbheader);
         return STATUS_ERROR;
     }
-
+    printf("not error!!!");
+    printf("1:: validate_db_header dbheader->version: %d\n", dbheader->version);
     dbheader->version = ntohs(dbheader->version);
+    printf("2::validate_db_header dbheader->version: %d\n", dbheader->version);
+
+    // dbheader->version = 1;
     dbheader->count = ntohs(dbheader->count);
-    dbheader->magic = ntohl(dbheader->magic);
+    dbheader->magic = ntohl(dbheader->magic); // dbheader->magic; //
     dbheader->filesize = ntohl(dbheader->filesize);
 
-    if (dbheader->magic != ntohl(dbheader->magic))
+    if (dbheader->magic != HEADER_MAGIC)
     {
         printf("Improper header magic\n");
         free(dbheader);
         return STATUS_ERROR;
     }
 
-    if (dbheader->version != 0x1)
+    if (dbheader->version != 1)
     {
         printf("Improper header version\n");
         free(dbheader);
@@ -79,6 +92,8 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
     struct stat dbstat = {0};
     fstat(fd, &dbstat);
     printf("dbstat st_size: %ld\n", dbstat.st_size);
+
+    printf("validate_db_header filesize?: %d\n", dbheader->filesize);
 
     if (dbheader->filesize != dbstat.st_size)
     {
