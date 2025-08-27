@@ -76,7 +76,7 @@ int validate_db_header(int fd, struct dbheader_t **header_out)
         return STATUS_ERROR;
     }
 
-    *header_out = header;
+    header_out = &header;
 
     return STATUS_SUCCESS;
 }
