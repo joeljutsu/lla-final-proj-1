@@ -27,7 +27,7 @@ int output_file(int fd, struct dbheader_t *header, struct employee_t **employees
     return STATUS_SUCCESS;
 }
 
-int validate_db_header(int fd, struct dbheader_t **header_out)
+int validate_db_header(int fd, struct dbheader_t **headerOut)
 {
     if (fd < 0)
     {
@@ -76,7 +76,7 @@ int validate_db_header(int fd, struct dbheader_t **header_out)
         return STATUS_ERROR;
     }
 
-    *header_out = header;
+    *headerOut = header;
 
     printf("returning STATUS_SUCCESS from validate_db_header()\n");
 

@@ -1,7 +1,9 @@
 #ifndef PARSE_H
 #define PARSE_H
 
-#define HEADER_MAGIC 0X4c4c4144
+#define HEADER_MAGIC 0x4c4c4144
+#define NAME_LEN 256
+#define ADDRESS_LEN 256
 
 struct dbheader_t
 {
@@ -11,16 +13,21 @@ struct dbheader_t
     unsigned int filesize;
 };
 
+// struct employee_t
+// {
+//     char name[256];
+//     char address[256];
+//     unsigned int hours;
+// };
 struct employee_t
 {
-    char name[256];
-    char address[256];
+    char name[NAME_LEN];
+    char address[ADDRESS_LEN];
     unsigned int hours;
 };
-
 int create_db_header(struct dbheader_t **header_out);
 // int create_db_header(int fd, struct dbheader_t **header_out);
-int validate_db_header(int fd, struct dbheader_t **header_out);
+int validate_db_header(int fd, struct dbheader_t **headerOut);
 int read_employees(int fd, struct dbheader_t *, struct employee_t **employees_out);
 int output_file(int fd, struct dbheader_t *, struct employee_t **employees);
 
