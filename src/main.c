@@ -58,14 +58,12 @@ int main(int argc, char *argv[])
             printf("Unable to create database file\n");
             return -1;
         }
-        printf("main() cread_db_file() OK\n");
 
         if (create_db_header(&header) == STATUS_ERROR)
         {
             printf("Failed to create database header\n");
             return -1;
         }
-        printf("main() create_db_header OK\n");
     }
     else
     {
@@ -75,13 +73,12 @@ int main(int argc, char *argv[])
             printf("Unable to open database file\n");
             return -1;
         }
-        printf("main() open_db_file OK\n");
+
         if (validate_db_header(dbfd, &header) == STATUS_ERROR)
         {
             printf("Failed to validate database header\n");
             return -1;
         }
-        printf("main() validate_db_header() OK\n");
     }
 
     output_file(dbfd, header, NULL);
