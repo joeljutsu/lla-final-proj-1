@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <string.h>
 
 #include "parse.h"
 #include "common.h"
@@ -19,7 +21,7 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
 
     dbheader->magic = htonl(dbheader->magic);
     dbheader->filesize = htonl(sizeof(struct dbheader_t) + sizeof(struct employee_t) * realcount);
-    dbheader->count = htons(dbheader->count);
+    dbheader->count = htons(dbheader->filesize);
     dbheader->version = htons(dbheader->version);
 
     lseek(fd, 0, SEEK_SET);
@@ -32,6 +34,7 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
 
 int validate_db_header(int fd, struct dbheader_t **headerOut)
 {
+    printf("fd: %d\n", fd);
     if (fd < 0)
     {
         printf("Got a bad FD from the user\n");
@@ -39,11 +42,13 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
     }
 
     struct dbheader_t *dbheader = calloc(1, sizeof(struct dbheader_t));
+
     if (dbheader == NULL)
     {
         printf("calloc failed to create db header\n");
         return STATUS_ERROR;
     }
+    lseek(fd, 0, SEEK_SET);
 
     if (read(fd, dbheader, sizeof(struct dbheader_t) != sizeof(struct dbheader_t)))
     {
@@ -57,7 +62,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
     dbheader->magic = ntohl(dbheader->magic);
     dbheader->filesize = ntohl(dbheader->filesize);
 
-    if (dbheader->magic != ntohl(HEADER_MAGIC))
+    if (dbheader->magic != ntohl(dbheader->magic))
     {
         printf("Improper header magic\n");
         free(dbheader);
@@ -73,13 +78,14 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
 
     struct stat dbstat = {0};
     fstat(fd, &dbstat);
+    printf("dbstat st_size: %ld\n", dbstat.st_size);
+
     if (dbheader->filesize != dbstat.st_size)
     {
         printf("Corrupted database \n");
         free(dbheader);
         return STATUS_ERROR;
     }
-
     *headerOut = dbheader;
     printf("validate_db_header() SUCCESS\n");
     return STATUS_SUCCESS;
