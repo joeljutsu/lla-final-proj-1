@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <getopt.h>
+#include <stdlib.h>
 
 #include "common.h"
 #include "file.h"
@@ -20,7 +21,7 @@ int main(int argc, char *argv[])
     bool newfile = false;
     int c = 0;
     int dbfd = -1;
-    struct dbheader_t *header = NULL;
+    struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
     while ((c = getopt(argc, argv, "nf:")) != -1)
     {
         switch (c)
