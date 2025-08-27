@@ -88,7 +88,11 @@ int main(int argc, char *argv[])
     }
 
     printf("main header version: %d\n", header->version);
-    output_file(dbfd, header, NULL);
+    if (output_file(dbfd, header, NULL) == STATUS_ERROR)
+    {
+        close(dbfd);
+        return -1;
+    }
     close(dbfd);
     return 0;
 }
