@@ -22,6 +22,8 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
     dbheader->count = htons(dbheader->count);
     dbheader->version = htons(dbheader->version);
 
+    printf("output_file magic: %d\n", dbheader->magic);
+
     lseek(fd, 0, SEEK_SET);
     write(fd, dbheader, sizeof(struct dbheader_t));
     printf("output_file() STATUS_SUCCESS");
@@ -47,6 +49,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
     }
 
     printf("validate_db_header dbheader callok() ok!\n");
+    printf("size of struct dbheader_t %ld\n", sizeof(struct dbheader_t));
     if (read(fd, dbheader, sizeof(struct dbheader_t) != sizeof(struct dbheader_t)))
     {
         perror("read");
@@ -54,14 +57,17 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
         return STATUS_ERROR;
     }
     printf("validate_db_header dbheader read ok\n");
+    printf("1) validate_db_header() dbheader->magic = %d\n", dbheader->magic);
+    printf("validate_db_header() dbheader->version = %d\n", dbheader->version);
 
     dbheader->version = ntohs(dbheader->version);
     dbheader->count = ntohs(dbheader->count);
     dbheader->magic = ntohl(dbheader->magic);
-    dbheader->magic = HEADER_MAGIC;
     dbheader->filesize = ntohl(dbheader->filesize);
 
-    if (dbheader->magic != HEADER_MAGIC)
+    printf("2) validate_db_header() dbheader->magic = %d\n", dbheader->magic);
+    printf("HEADER MAGIC: %d\n", HEADER_MAGIC);
+    if (dbheader->magic != ntohl(HEADER_MAGIC))
     {
         printf("Improper header magic\n");
         free(dbheader);

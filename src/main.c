@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <getopt.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "common.h"
 #include "file.h"
@@ -62,7 +63,6 @@ int main(int argc, char *argv[])
             printf("Failed to create database header\n");
             return -1;
         }
-        output_file(dbfd, header, NULL);
     }
     else
     {
@@ -79,5 +79,6 @@ int main(int argc, char *argv[])
         }
     }
 
+    output_file(dbfd, header, NULL);
     return 0;
 }
