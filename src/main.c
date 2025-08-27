@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
             printf("Failed to create database header\n");
             return -1;
         }
+        output_file(dbfd, header);
     }
     else
     {
