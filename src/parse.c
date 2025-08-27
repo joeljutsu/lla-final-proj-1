@@ -8,7 +8,7 @@
 #include "parse.h"
 #include "common.h"
 
-int output_file(int fd, struct dbheader_t *header)
+int output_file(int fd, struct dbheader_t *header, struct employee_t **employees)
 {
     if (fd < 0)
     {
