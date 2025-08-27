@@ -57,14 +57,14 @@ int validate_db_header(int fd, struct dbheader_t **header_out)
     {
         printf("Improper header magic\n");
         free(header);
-        return -1;
+        return STATUS_ERROR;
     }
 
     if (header->version != 1)
     {
         printf("Improper header version\n");
         free(header);
-        return -1;
+        return STATUS_ERROR;
     }
 
     struct stat dbstat = {0};
@@ -73,8 +73,9 @@ int validate_db_header(int fd, struct dbheader_t **header_out)
     {
         printf("Corrupted database \n");
         free(header);
-        return -1;
+        return STATUS_ERROR;
     }
+
     *header_out = header;
 
     return STATUS_SUCCESS;
