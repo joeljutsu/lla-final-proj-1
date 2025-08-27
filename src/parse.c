@@ -18,7 +18,7 @@ int output_file(int fd, struct dbheader_t *header, struct employee_t **employees
 
     header->magic = htonl(header->magic);
     header->filesize = htonl(header->filesize);
-    header->count = htons(header->filesize);
+    header->count = htons(header->count);
     header->version = htons(header->version);
 
     lseek(fd, 0, SEEK_SET);
