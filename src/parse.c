@@ -29,16 +29,25 @@ int add_employee(struct dbheader_t *header, struct employee_t *employees, char *
     {
         printf("parse::add_employee::employees NOT null!!!\n");
     }
-    printf("parse::add_employee:: sizeof employees name %lu\n", sizeof(employees[header->count - 1].name));
+    // printf("parse::add_employee:: sizeof employees name %lu\n", sizeof(employees[header->count - 1].name));
     strncpy(employees[header->count - 1].name, name, sizeof(employees[header->count - 1].name));
-    printf("parse::add_employee::strncpy name OK! = emp name = %s\n", employees[header->count - 1].name);
+    // printf("parse::add_employee::strncpy name OK! = emp name = %s\n", employees[header->count - 1].name);
+    if (employees == NULL)
+    {
+        printf("parse::add_employee::employees NULL!!!!!!\n");
+        return -1;
+    }
 
-    printf("parse::add_employee:: sizeof employees address %lu\n", sizeof(employees[header->count - 1].address));
+    // printf("parse::add_employee:: sizeof employees address %lu\n", sizeof(employees[header->count - 1].address));
     strncpy(employees[header->count - 1].address, addr, sizeof(employees[header->count - 1].address));
-    printf("parse::add_employee:: strncpy address OK! emp addr = %s\n", employees[header->count - 1].address);
-
+    // printf("parse::add_employee:: strncpy address OK! emp addr = %s\n", employees[header->count - 1].address);
+    if (employees == NULL)
+    {
+        printf("parse::add_employee::employees NULL!!!!!!\n");
+        return -1;
+    }
     employees[header->count - 1].hours = atoi(hours);
-    printf("parse::add_employee:: exiting add_employee()\n");
+    // printf("parse::add_employee:: exiting add_employee()\n");
 
     return STATUS_SUCCESS;
 }
