@@ -134,7 +134,11 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
     }
     for (int i = 0; i < realcount; i++)
     {
-        printf("parse::output_file:: writing employees[%d]->name = %s\n", i, employees[i].name);
+        // printf("parse::output_file:: writing employees[%d]->name = %s\n", i, employees[i].name);
+        if ((sizeof(employees) / sizeof(struct employee_t) <= 0))
+        {
+            return -1;
+        }
         employees[i].hours = htonl(employees[i].hours);
         if (write(fd, &employees[i], sizeof(struct employee_t)) == -1)
         {
