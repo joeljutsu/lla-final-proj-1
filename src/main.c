@@ -25,12 +25,7 @@ int main(int argc, char *argv[])
     bool newfile = false;
     int c = 0;
     int dbfd = -1;
-    struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
-    if (header == NULL)
-    {
-        printf("WHOOPS");
-        return -1;
-    }
+    struct dbheader_t *header = NULL;
 
     struct employee_t *employees = NULL;
 
