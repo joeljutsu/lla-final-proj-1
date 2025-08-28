@@ -10,6 +10,40 @@
 #include "parse.h"
 #include "common.h"
 
+int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **employees_out)
+{
+    if (fd < 0)
+    {
+        printf("got bad fd from user\n");
+        return STATUS_ERROR;
+    }
+
+    if (dbheader == NULL)
+    {
+        printf("null dbheader");
+        return STATUS_ERROR;
+    }
+
+    int count = dbheader->count;
+
+    struct employee_t *employees = calloc(count, sizeof(struct employee_t));
+    if (employees == NULL)
+    {
+        printf("Calloc failed on employees\n");
+        return STATUS_ERROR;
+    }
+
+    for (int i = 0; i < count; i++)
+    {
+        employees[i].hours = ntohl(employees[i].hours);
+        // employees[i].address = ntohl(employees[i].address);
+    }
+
+    *employees_out = employees;
+
+    return STATUS_SUCCESS;
+}
+
 int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employees)
 {
     if (fd < 0)
@@ -178,28 +212,3 @@ int create_db_header(struct dbheader_t **header_out)
 
     return STATUS_SUCCESS;
 }
-
-/*
-
-int create_db_header(int fd, struct dbheader_t **header_out)
-{
-    struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
-    if (header == NULL)
-    {
-        printf("calloc failed to create db header\n");
-        return STATUS_ERROR;
-    }
-    header->version = 0x1;
-    header->count = 0;
-    header->magic = HEADER_MAGIC;
-    header->filesize = sizeof(struct dbheader_t);
-
-    *header_out = header;
-
-    return STATUS_SUCCESS;
-}
-int read_employees(int fd, struct dbheader_t *, struct employee_t **employees_out)
-{
-    return 0;
-}
-*/
