@@ -84,7 +84,7 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
     //     return -1;
     // }
 
-    // dbheader->version = htons(dbheader->version);
+    dbheader->version = htons(dbheader->version);
 
     // if (dbheader->version == -1)
     // {
