@@ -10,33 +10,35 @@
 #include "parse.h"
 #include "common.h"
 
-int add_employee(struct dbheader_t *header, struct employee_t **employees, char *addstring)
+int add_employee(struct dbheader_t *header, struct employee_t *employees, char *addstring)
 {
-    printf("ADD EMPLOYEE: %s\n", addstring);
+    printf("parse::ADD EMPLOYEE: %s\n", addstring);
 
     char *name = strtok(addstring, ",");
     char *addr = strtok(NULL, ",");
     char *hours = strtok(NULL, ",");
 
-    printf("HELLO %s%s%s\n", name, addr, hours);
+    printf("parse::add_employee:: HELLO %s %s %s\n", name, addr, hours);
 
     if (employees == NULL)
     {
-        printf("employees NULL!!!!!!\n");
+        printf("parse::add_employee::employees NULL!!!!!!\n");
         return -1;
     }
     else
     {
-        printf("employees NOT null!!!\n");
+        printf("parse::add_employee::employees NOT null!!!\n");
     }
-    printf("sizeof employees name %lu\n", sizeof(employees[header->count - 1]->name));
-    strncpy(employees[header->count - 1]->name, name, sizeof(employees[header->count - 1]->name));
-    printf("strncpy 1 OK! = emp name = %s\n", employees[header->count - 1]->name);
+    printf("parse::add_employee:: sizeof employees name %lu\n", sizeof(employees[header->count - 1].name));
+    strncpy(employees[header->count - 1].name, name, sizeof(employees[header->count - 1].name));
+    printf("parse::add_employee::strncpy name OK! = emp name = %s\n", employees[header->count - 1].name);
 
-    strncpy(employees[header->count - 1]->address, addr, sizeof(employees[header->count - 1]->address));
-    printf("strncpy 2 OK! emp addr = %s\n", employees[header->count - 1]->address);
-    employees[header->count - 1]->hours = atoi(hours);
-    printf("exiting add_employee()\n");
+    printf("parse::add_employee:: sizeof employees address %lu\n", sizeof(employees[header->count - 1].address));
+    strncpy(employees[header->count - 1].address, addr, sizeof(employees[header->count - 1].address));
+    printf("parse::add_employee:: strncpy address OK! emp addr = %s\n", employees[header->count - 1].address);
+
+    employees[header->count - 1].hours = atoi(hours);
+    printf("parse::add_employee:: exiting add_employee()\n");
 
     return STATUS_SUCCESS;
 }
@@ -45,13 +47,13 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
 {
     if (fd < 0)
     {
-        printf("got bad fd from user\n");
+        printf("parse::read_employee::got bad fd from user\n");
         return STATUS_ERROR;
     }
 
     if (dbheader == NULL)
     {
-        printf("null dbheader\n");
+        printf("parse::read_employee::null dbheader\n");
         return STATUS_ERROR;
     }
 
@@ -60,19 +62,20 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
     struct employee_t *employees = calloc(count, sizeof(struct employee_t));
     if (employees == NULL)
     {
-        printf("Calloc failed on employees\n");
+        printf("parse::read_employee:: Calloc failed on employees\n");
         return STATUS_ERROR;
     }
 
     if (read(fd, employees, count * sizeof(struct employee_t)) == -1)
     {
-        printf("read failed!\n");
+        printf("parse::read_employee:: read failed!\n");
         return STATUS_ERROR;
     }
 
     for (int i = 0; i < count; i++)
     {
         employees[i].hours = ntohl(employees[i].hours);
+        printf("parse::read_employee:: setting employee[%d] hours = %d\n", i, employees[i].hours);
     }
 
     *employees_out = employees;
@@ -80,48 +83,49 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
     return STATUS_SUCCESS;
 }
 
-int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employees)
+int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employees)
 {
     printf("OUTPUT_FILE...\n");
     if (fd < 0)
     {
-        printf("Got a bad FD from the user\n");
+        printf("parse::output_file:: Got a bad FD from the user\n");
         return STATUS_ERROR;
     }
     if (dbheader == NULL)
     {
-        printf("got null dbheader!");
+        printf("parse::output::file:: got null dbheader!");
         return STATUS_ERROR;
     }
     int realcount = dbheader->count;
 
+    printf("parse::output_file:: realcount = %d", realcount);
     dbheader->magic = htonl(dbheader->magic);
     if (dbheader->magic == -1)
     {
         return -1;
     }
-    dbheader->filesize = htonl(sizeof(struct dbheader_t) + sizeof(struct employee_t) * realcount);
+    dbheader->filesize = htonl(sizeof(struct dbheader_t) + (sizeof(struct employee_t) * realcount));
     dbheader->count = htons(dbheader->count);
     dbheader->version = htons(dbheader->version);
 
     if (lseek(fd, 0, SEEK_SET) == -1)
     {
-        printf("error lseek!");
+        printf("perror::output_fle:: error lseek!");
         return STATUS_ERROR;
     }
     if (write(fd, dbheader, sizeof(struct dbheader_t)) == -1)
     {
-        printf("error write!");
+        printf("parse::output_file:: error write!");
         return STATUS_ERROR;
     }
     for (int i = 0; i < realcount; i++)
     {
-        printf("writing employees[%d]->name = %s\n", i, employees[i]->name);
-        employees[i]->hours = htonl(employees[i]->hours);
-        write(fd, employees[i], sizeof(struct employee_t));
+        printf("parse::output_file:: writing employees[%d]->name = %s\n", i, employees[i].name);
+        employees[i].hours = htonl(employees[i].hours);
+        write(fd, &employees[i], sizeof(struct employee_t));
     }
 
-    // close(fd);
+    close(fd);
 
     return STATUS_SUCCESS;
 }

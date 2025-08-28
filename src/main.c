@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
     if (newfile)
     {
-        printf("NEWFILE\n");
+        printf("main::NEWFILE\n");
         dbfd = create_db_file(filepath);
         if (dbfd == STATUS_ERROR)
         {
@@ -76,70 +76,70 @@ int main(int argc, char *argv[])
     }
     else
     {
-        printf("NOT NEWFILE\n");
+        printf("main::NOT NEWFILE\n");
         dbfd = open_db_file(filepath);
         if (dbfd == STATUS_ERROR)
         {
             printf("Unable to open database file\n");
             return -1;
         }
-        printf("OPEND FD OK!\n");
+        printf("main::OPENED FD OK!\n");
 
         if (validate_db_header(dbfd, &header) == STATUS_ERROR)
         {
             printf("Failed to validate database header\n");
             return -1;
         }
-        printf("VALIDATE DB HEADER OK!\n");
+        printf("main::VALIDATE DB HEADER OK!\n");
     }
 
     if (header == NULL)
     {
-        printf("HEADER NULL!!!\n");
+        printf("main::HEADER NULL!!!\n");
         return -1;
     }
     else
     {
-        printf("HEADER NOT NULL!!!\n");
+        printf("main::HEADER NOT NULL!!!\n");
     }
 
     if (read_employees(dbfd, header, &employees) == STATUS_ERROR)
     {
-        printf("error reading employees!\n");
+        printf("main::error reading employees!\n");
         close(dbfd);
         return -1;
     }
-    printf("READ EMPLOYEES OK!\n");
+    printf("main:: READ EMPLOYEES OK!\n");
 
     if (addstring)
     {
-        printf("ADDSTRING!\n");
+        printf("main::ADDSTRING!\n");
         if (header == NULL)
         {
-            printf("inner HEADER NULL!!!\n");
+            printf("main::inner HEADER NULL!!!\n");
             return -1;
         }
         else
         {
-            printf("inner HEADER NOT NULL!!!\n");
+            printf("main::inner HEADER NOT NULL!!!\n");
         }
 
         header->count++;
-        printf("HEADER COUNT: %d\n", header->count);
+        printf("main::HEADER COUNT: %d\n", header->count);
 
-        employees = realloc(employees, header->count * sizeof(struct employee_t));
+        employees = realloc(employees, (header->count * sizeof(struct employee_t)));
         if (employees == NULL)
         {
-            printf("EMPLOYEES REALLOC FAILED!\n");
+            printf("main::EMPLOYEES REALLOC FAILED!\n");
             return -1;
         }
         else
         {
-            printf("REALLOC OK!!!!!! %lu\n", header->count * sizeof(struct employee_t));
+            printf("main:: REALLOC OK!!!!!! %lu\n", header->count * sizeof(struct employee_t));
         }
-        add_employee(header, &employees, addstring);
+        add_employee(header, employees, addstring);
     }
-    if (output_file(dbfd, header, &employees) == STATUS_ERROR)
+    if (output_file(dbfd, header, employees) == STATUS_ERROR)
     {
         close(dbfd);
         return -1;
