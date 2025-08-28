@@ -10,17 +10,35 @@
 #include "parse.h"
 #include "common.h"
 
-int add_employee(struct dbheader_t *header, struct employee_t *employees, char *addstring)
+int add_employee(struct dbheader_t *header, struct employee_t **employees, char *addstring)
 {
-    printf("%s\n", addstring);
+    printf("ADD EMPLOYEE: %s\n", addstring);
 
     char *name = strtok(addstring, ",");
     char *addr = strtok(NULL, ",");
     char *hours = strtok(NULL, ",");
 
-    printf("%s%s%s\n", name, addr, hours);
+    printf("HELLO %s%s%s\n", name, addr, hours);
 
-    return 0;
+    if (employees == NULL)
+    {
+        printf("employees NULL!!!!!!\n");
+        return -1;
+    }
+    else
+    {
+        printf("employees NOT null!!!\n");
+    }
+    printf("sizeof employees name %lu\n", sizeof(employees[header->count - 1]->name));
+    strncpy(employees[header->count - 1]->name, name, sizeof(employees[header->count - 1]->name));
+    printf("strncpy 1 OK! = emp name = %s\n", employees[header->count - 1]->name);
+
+    strncpy(employees[header->count - 1]->address, addr, sizeof(employees[header->count - 1]->address));
+    printf("strncpy 2 OK! emp addr = %s\n", employees[header->count - 1]->address);
+    employees[header->count - 1]->hours = atoi(hours);
+    printf("exiting add_employee()\n");
+
+    return STATUS_SUCCESS;
 }
 
 int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **employees_out)
@@ -55,7 +73,6 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
     for (int i = 0; i < count; i++)
     {
         employees[i].hours = ntohl(employees[i].hours);
-        // employees[i].address = ntohl(employees[i].address);
     }
 
     *employees_out = employees;
@@ -65,6 +82,7 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
 
 int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employees)
 {
+    printf("OUTPUT_FILE...\n");
     if (fd < 0)
     {
         printf("Got a bad FD from the user\n");
@@ -82,27 +100,9 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
     {
         return -1;
     }
-
     dbheader->filesize = htonl(sizeof(struct dbheader_t) + sizeof(struct employee_t) * realcount);
-
-    if (dbheader->filesize == -1)
-    {
-        return -1;
-    }
-
-    dbheader->count = htons(dbheader->filesize);
-
-    // if (dbheader->count == -1)
-    // {
-    //     return -1;
-    // }
-
+    dbheader->count = htons(dbheader->count);
     dbheader->version = htons(dbheader->version);
-
-    // if (dbheader->version == -1)
-    // {
-    //     return -1;
-    // }
 
     if (lseek(fd, 0, SEEK_SET) == -1)
     {
@@ -114,8 +114,14 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
         printf("error write!");
         return STATUS_ERROR;
     }
+    for (int i = 0; i < realcount; i++)
+    {
+        printf("writing employees[%d]->name = %s\n", i, employees[i]->name);
+        employees[i]->hours = htonl(employees[i]->hours);
+        write(fd, employees[i], sizeof(struct employee_t));
+    }
 
-    close(fd);
+    // close(fd);
 
     return STATUS_SUCCESS;
 }
@@ -151,32 +157,9 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
     }
 
     dbheader->version = ntohs(dbheader->version);
-
-    // if (dbheader->version == -1)
-    // {
-    //     return -1;
-    // }
-
     dbheader->count = ntohs(dbheader->count);
-
-    // if (dbheader->count == -1)
-    // {
-    //     return -1;
-    // }
-
     dbheader->magic = ntohl(dbheader->magic); // dbheader->magic; //
-
-    if (dbheader->magic == -1)
-    {
-        return -1;
-    }
-
     dbheader->filesize = ntohl(dbheader->filesize);
-
-    if (dbheader->filesize == -1)
-    {
-        return -1;
-    }
 
     if (dbheader->magic != HEADER_MAGIC)
     {

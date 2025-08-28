@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
             break;
         case 'a':
             addstring = optarg;
+            break;
         case '?':
             printf("Uknown option -%c\n", c);
             break;
@@ -59,6 +60,7 @@ int main(int argc, char *argv[])
 
     if (newfile)
     {
+        printf("NEWFILE\n");
         dbfd = create_db_file(filepath);
         if (dbfd == STATUS_ERROR)
         {
@@ -74,18 +76,21 @@ int main(int argc, char *argv[])
     }
     else
     {
+        printf("NOT NEWFILE\n");
         dbfd = open_db_file(filepath);
         if (dbfd == STATUS_ERROR)
         {
             printf("Unable to open database file\n");
             return -1;
         }
+        printf("OPEND FD OK!\n");
 
         if (validate_db_header(dbfd, &header) == STATUS_ERROR)
         {
             printf("Failed to validate database header\n");
             return -1;
         }
+        printf("VALIDATE DB HEADER OK!\n");
     }
 
     if (header == NULL)
@@ -104,12 +109,37 @@ int main(int argc, char *argv[])
         close(dbfd);
         return -1;
     }
+    printf("READ EMPLOYEES OK!\n");
 
     if (addstring)
     {
-        add_employee(header, employees, addstring);
+        printf("ADDSTRING!\n");
+        if (header == NULL)
+        {
+            printf("inner HEADER NULL!!!\n");
+            return -1;
+        }
+        else
+        {
+            printf("inner HEADER NOT NULL!!!\n");
+        }
+
+        header->count++;
+        printf("HEADER COUNT: %d\n", header->count);
+
+        employees = realloc(employees, header->count * sizeof(struct employee_t));
+        if (employees == NULL)
+        {
+            printf("EMPLOYEES REALLOC FAILED!\n");
+            return -1;
+        }
+        else
+        {
+            printf("REALLOC OK!!!!!! %lu\n", header->count * sizeof(struct employee_t));
+        }
+        add_employee(header, &employees, addstring);
     }
-    if (output_file(dbfd, header, NULL) == STATUS_ERROR)
+    if (output_file(dbfd, header, &employees) == STATUS_ERROR)
     {
         close(dbfd);
         return -1;
