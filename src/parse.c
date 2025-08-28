@@ -127,6 +127,11 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
         printf("parse::output_file:: error write!");
         return STATUS_ERROR;
     }
+
+    if (employees == NULL)
+    {
+        return STATUS_ERROR;
+    }
     for (int i = 0; i < realcount; i++)
     {
         printf("parse::output_file:: writing employees[%d]->name = %s\n", i, employees[i].name);
