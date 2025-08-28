@@ -10,6 +10,12 @@
 #include "parse.h"
 #include "common.h"
 
+int add_employee(struct dbheader_t *header, struct employee_t *employees, char *addstring)
+{
+    printf("%s\n", addstring);
+    return 0;
+}
+
 int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **employees_out)
 {
     if (fd < 0)

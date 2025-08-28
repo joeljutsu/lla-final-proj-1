@@ -20,6 +20,8 @@ int main(int argc, char *argv[])
 {
     printf("\n:::::START RUN:::::\n");
     char *filepath = NULL;
+    char *addstring = NULL;
+
     bool newfile = false;
     int c = 0;
     int dbfd = -1;
@@ -32,7 +34,7 @@ int main(int argc, char *argv[])
 
     struct employee_t *employees = NULL;
 
-    while ((c = getopt(argc, argv, "nf:")) != -1)
+    while ((c = getopt(argc, argv, "nf:a:")) != -1)
     {
         switch (c)
         {
@@ -43,6 +45,8 @@ int main(int argc, char *argv[])
         case 'f':
             filepath = optarg;
             break;
+        case 'a':
+            addstring = optarg;
         case '?':
             printf("Uknown option -%c\n", c);
             break;
@@ -104,6 +108,11 @@ int main(int argc, char *argv[])
         printf("error reading employees!\n");
         close(dbfd);
         return -1;
+    }
+
+    if (addstring)
+    {
+        add_employee(header, employees, addstring);
     }
     if (output_file(dbfd, header, NULL) == STATUS_ERROR)
     {
