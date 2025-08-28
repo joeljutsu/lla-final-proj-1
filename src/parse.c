@@ -131,7 +131,11 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
     {
         printf("parse::output_file:: writing employees[%d]->name = %s\n", i, employees[i].name);
         employees[i].hours = htonl(employees[i].hours);
-        write(fd, &employees[i], sizeof(struct employee_t));
+        if (write(fd, &employees[i], sizeof(struct employee_t)) == -1)
+        {
+            printf("write add emp ERROR!\n");
+            return STATUS_ERROR;
+        }
     }
 
     close(fd);
