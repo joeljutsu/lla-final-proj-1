@@ -20,7 +20,7 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
 
     if (dbheader == NULL)
     {
-        printf("null dbheader");
+        printf("null dbheader\n");
         return STATUS_ERROR;
     }
 
@@ -30,6 +30,12 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
     if (employees == NULL)
     {
         printf("Calloc failed on employees\n");
+        return STATUS_ERROR;
+    }
+
+    if (read(fd, employees, count * sizeof(struct employee_t)) == -1)
+    {
+        printf("read failed!\n");
         return STATUS_ERROR;
     }
 
@@ -73,17 +79,17 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
 
     dbheader->count = htons(dbheader->filesize);
 
-    if (dbheader->count == -1)
-    {
-        return -1;
-    }
+    // if (dbheader->count == -1)
+    // {
+    //     return -1;
+    // }
 
-    dbheader->version = htons(dbheader->version);
+    // dbheader->version = htons(dbheader->version);
 
-    if (dbheader->version == -1)
-    {
-        return -1;
-    }
+    // if (dbheader->version == -1)
+    // {
+    //     return -1;
+    // }
 
     if (lseek(fd, 0, SEEK_SET) == -1)
     {
@@ -133,17 +139,17 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
 
     dbheader->version = ntohs(dbheader->version);
 
-    if (dbheader->version == -1)
-    {
-        return -1;
-    }
+    // if (dbheader->version == -1)
+    // {
+    //     return -1;
+    // }
 
     dbheader->count = ntohs(dbheader->count);
 
-    if (dbheader->count == -1)
-    {
-        return -1;
-    }
+    // if (dbheader->count == -1)
+    // {
+    //     return -1;
+    // }
 
     dbheader->magic = ntohl(dbheader->magic); // dbheader->magic; //
 

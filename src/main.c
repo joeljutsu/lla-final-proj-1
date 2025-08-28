@@ -29,6 +29,9 @@ int main(int argc, char *argv[])
         printf("WHOOPS");
         return -1;
     }
+
+    struct employee_t *employees = NULL;
+
     while ((c = getopt(argc, argv, "nf:")) != -1)
     {
         switch (c)
@@ -94,6 +97,13 @@ int main(int argc, char *argv[])
     else
     {
         printf("HEADER NOT NULL!!!\n");
+    }
+
+    if (read_employees(dbfd, header, &employees) == STATUS_ERROR)
+    {
+        printf("error reading employees!\n");
+        close(dbfd);
+        return -1;
     }
     if (output_file(dbfd, header, NULL) == STATUS_ERROR)
     {
