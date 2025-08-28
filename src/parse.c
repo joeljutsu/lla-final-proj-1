@@ -205,6 +205,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
         free(dbheader);
         return STATUS_ERROR;
     }
+    printf("validate_db_header:: filesize OK!!!\n");
     *headerOut = dbheader;
 
     return STATUS_SUCCESS;
