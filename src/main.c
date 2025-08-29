@@ -98,10 +98,6 @@ int main(int argc, char *argv[])
         printf("main::HEADER NULL!!!\n");
         return -1;
     }
-    else
-    {
-        printf("main::HEADER NOT NULL!!!\n");
-    }
 
     if (read_employees(dbfd, header, &employees) == STATUS_ERROR)
     {

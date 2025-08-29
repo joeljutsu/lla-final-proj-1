@@ -1,3 +1,4 @@
 .vscode
-mynewdb.db
-*.o
+./mynewdb.db
+./bin/dbview
+./obj/*.o
