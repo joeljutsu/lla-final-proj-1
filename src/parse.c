@@ -20,34 +20,10 @@ int add_employee(struct dbheader_t *header, struct employee_t *employees, char *
 
     printf("parse::add_employee:: HELLO %s %s %s\n", name, addr, hours);
 
-    if (employees == NULL)
-    {
-        printf("parse::add_employee::employees NULL!!!!!!\n");
-        return -1;
-    }
-    else
-    {
-        printf("parse::add_employee::employees NOT null!!!\n");
-    }
-    // printf("parse::add_employee:: sizeof employees name %lu\n", sizeof(employees[header->count - 1].name));
     strncpy(employees[header->count - 1].name, name, sizeof(employees[header->count - 1].name));
-    // printf("parse::add_employee::strncpy name OK! = emp name = %s\n", employees[header->count - 1].name);
-    if (employees == NULL)
-    {
-        printf("parse::add_employee::employees NULL!!!!!!\n");
-        return -1;
-    }
-
-    // printf("parse::add_employee:: sizeof employees address %lu\n", sizeof(employees[header->count - 1].address));
     strncpy(employees[header->count - 1].address, addr, sizeof(employees[header->count - 1].address));
-    // printf("parse::add_employee:: strncpy address OK! emp addr = %s\n", employees[header->count - 1].address);
-    if (employees == NULL)
-    {
-        printf("parse::add_employee::employees NULL!!!!!!\n");
-        return -1;
-    }
+
     employees[header->count - 1].hours = atoi(hours);
-    // printf("parse::add_employee:: exiting add_employee()\n");
 
     return STATUS_SUCCESS;
 }
@@ -60,16 +36,10 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
         return STATUS_ERROR;
     }
 
-    if (dbheader == NULL)
-    {
-        printf("parse::read_employee::null dbheader\n");
-        return STATUS_ERROR;
-    }
-
     int count = dbheader->count;
 
     struct employee_t *employees = calloc(count, sizeof(struct employee_t));
-    if (employees == NULL)
+    if (employees == (void *)-1)
     {
         printf("parse::read_employee:: Calloc failed on employees\n");
         return STATUS_ERROR;
@@ -100,33 +70,13 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
         printf("parse::output_file:: Got a bad FD from the user\n");
         return STATUS_ERROR;
     }
-    if (dbheader == NULL)
-    {
-        printf("parse::output::file:: got null dbheader!");
-        return STATUS_ERROR;
-    }
+
     int realcount = dbheader->count;
 
-    printf("parse::output_file:: realcount = %d\n", realcount);
     dbheader->magic = htonl(dbheader->magic);
-    if (dbheader->magic == -1)
-    {
-        return -1;
-    }
-    else
-    {
-        printf("output_file:: dbheader magic OK!!!\n");
-    }
-    printf("output_file:: dbheader fileize before! = %d\n", dbheader->filesize);
     dbheader->filesize = htonl(sizeof(struct dbheader_t) + (sizeof(struct employee_t) * realcount));
-    printf("output_file:: dbheader fileize OK! = %d\n", dbheader->filesize);
-    printf("output_file:: dbheader->count before = %d\n", dbheader->count);
     dbheader->count = htons(dbheader->count);
-    printf("output_file:: dbheader->count after = %d\n", dbheader->count);
-
-    printf("output_file:: dbheader->version before = %d\n", dbheader->version);
     dbheader->version = htons(dbheader->version);
-    printf("output_file:: dbheader->version after = %d\n", dbheader->version);
 
     if (lseek(fd, 0, SEEK_SET) == -1)
     {
@@ -141,10 +91,6 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
     }
     printf("output_file:: write() OK!!!\n");
 
-    if (employees == NULL)
-    {
-        return STATUS_ERROR;
-    }
     for (int i = 0; i < realcount; i++)
     {
         employees[i].hours = htonl(employees[i].hours);
@@ -155,7 +101,7 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
         }
     }
 
-    close(fd);
+    // close(fd);
 
     return STATUS_SUCCESS;
 }
@@ -169,14 +115,8 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
         return STATUS_ERROR;
     }
 
-    if (headerOut == NULL)
-    {
-        return -1;
-    }
-
     struct dbheader_t *dbheader = calloc(1, sizeof(struct dbheader_t));
-
-    if (dbheader == NULL)
+    if (dbheader == (void *)-1)
     {
         printf("calloc failed to create db header\n");
         return STATUS_ERROR;
