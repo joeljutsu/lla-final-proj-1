@@ -10,17 +10,17 @@
 #include "parse.h"
 #include "common.h"
 
-int add_employee(struct dbheader_t *header, struct employee_t **employees, char *addstring)
+int add_employee(struct dbheader_t *header, struct employee_t *employees, char *addstring)
 {
     printf("parse::ADD EMPLOYEE: %s\n", addstring);
 
     char *name = strtok(addstring, ",");
     char *addr = strtok(NULL, ",");
     char *hours = strtok(NULL, ",");
-    strncpy(employees[header->count - 1]->name, name, sizeof(employees[header->count - 1]->name));
-    strncpy(employees[header->count - 1]->address, addr, sizeof(employees[header->count - 1]->address));
+    strncpy(employees[header->count - 1].name, name, sizeof(employees[header->count - 1].name));
+    strncpy(employees[header->count - 1].address, addr, sizeof(employees[header->count - 1].address));
 
-    employees[header->count - 1]->hours = atoi(hours);
+    employees[header->count - 1].hours = atoi(hours);
 
     return STATUS_SUCCESS;
 }
@@ -59,7 +59,7 @@ int read_employees(int fd, struct dbheader_t *dbheader, struct employee_t **empl
     return STATUS_SUCCESS;
 }
 
-int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employees)
+int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employees)
 {
     printf("OUTPUT_FILE...\n");
     if (fd < 0)
@@ -90,12 +90,12 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t **employe
 
     for (int i = 0; i < realcount; i++)
     {
-        printf("DEBUG:: %s\n", employees[i]->name);
-        printf("DEBUG:: %s\n", employees[i]->address);
-        printf("DEBUG:: %d\n", employees[i]->hours);
+        printf("DEBUG:: %s\n", employees[i].name);
+        printf("DEBUG:: %s\n", employees[i].address);
+        printf("DEBUG:: %d\n", employees[i].hours);
         printf("DEBUG::sizeof employee_t = %ld\n", sizeof(struct employee_t));
-        employees[i]->hours = htonl(employees[i]->hours);
-        if (write(fd, employees[i], sizeof(struct employee_t)) == -1)
+        employees[i].hours = htonl(employees[i].hours);
+        if (write(fd, &employees[i], sizeof(struct employee_t)) == -1)
         {
             printf("write add emp ERROR!\n");
             return STATUS_ERROR;

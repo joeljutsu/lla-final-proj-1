@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
             printf("main:: REALLOC OK!!!!!! %lu\n", header->count * sizeof(struct employee_t));
         }
 
-        if (add_employee(header, &employees, addstring) == STATUS_ERROR)
+        if (add_employee(header, employees, addstring) == STATUS_ERROR)
         {
             printf("in main, add_employee FAILED!!!\n");
             return -1;
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
             printf("main:: add_emloyee OK!!!!\n");
         }
     }
-    if (output_file(dbfd, header, &employees) == STATUS_ERROR)
+    if (output_file(dbfd, header, employees) == STATUS_ERROR)
     {
         close(dbfd);
         return -1;
