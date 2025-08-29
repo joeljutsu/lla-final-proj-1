@@ -114,15 +114,6 @@ int main(int argc, char *argv[])
     if (addstring)
     {
         printf("main::ADDSTRING!\n");
-        if (header == NULL)
-        {
-            printf("main::inner HEADER NULL!!!\n");
-            return -1;
-        }
-        else
-        {
-            printf("main::inner HEADER NOT NULL!!!\n");
-        }
 
         header->count++;
         printf("main::HEADER COUNT: %d\n", header->count);
@@ -142,6 +133,10 @@ int main(int argc, char *argv[])
         {
             printf("in main, add_employee FAILED!!!\n");
             return -1;
+        }
+        else
+        {
+            printf("main:: add_emloyee OK!!!!\n");
         }
     }
     if (output_file(dbfd, header, employees) == STATUS_ERROR)

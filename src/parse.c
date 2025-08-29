@@ -107,26 +107,39 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
     }
     int realcount = dbheader->count;
 
-    printf("parse::output_file:: realcount = %d", realcount);
+    printf("parse::output_file:: realcount = %d\n", realcount);
     dbheader->magic = htonl(dbheader->magic);
     if (dbheader->magic == -1)
     {
         return -1;
     }
+    else
+    {
+        printf("output_file:: dbheader magic OK!!!\n");
+    }
+    printf("output_file:: dbheader fileize before! = %d\n", dbheader->filesize);
     dbheader->filesize = htonl(sizeof(struct dbheader_t) + (sizeof(struct employee_t) * realcount));
+    printf("output_file:: dbheader fileize OK! = %d\n", dbheader->filesize);
+    printf("output_file:: dbheader->count before = %d\n", dbheader->count);
     dbheader->count = htons(dbheader->count);
+    printf("output_file:: dbheader->count after = %d\n", dbheader->count);
+
+    printf("output_file:: dbheader->version before = %d\n", dbheader->version);
     dbheader->version = htons(dbheader->version);
+    printf("output_file:: dbheader->version after = %d\n", dbheader->version);
 
     if (lseek(fd, 0, SEEK_SET) == -1)
     {
         printf("perror::output_fle:: error lseek!");
         return STATUS_ERROR;
     }
+    printf("output_file:: lseek OK!!!\n");
     if (write(fd, dbheader, sizeof(struct dbheader_t)) == -1)
     {
         printf("parse::output_file:: error write!");
         return STATUS_ERROR;
     }
+    printf("output_file:: write() OK!!!\n");
 
     if (employees == NULL)
     {
@@ -134,11 +147,6 @@ int output_file(int fd, struct dbheader_t *dbheader, struct employee_t *employee
     }
     for (int i = 0; i < realcount; i++)
     {
-        // printf("parse::output_file:: writing employees[%d]->name = %s\n", i, employees[i].name);
-        if ((sizeof(employees) / sizeof(struct employee_t) <= 0))
-        {
-            return -1;
-        }
         employees[i].hours = htonl(employees[i].hours);
         if (write(fd, &employees[i], sizeof(struct employee_t)) == -1)
         {
