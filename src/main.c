@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
         free(header);
     }
     if (employees != NULL){
-        free(header);
+        free(employees);
     }
     close(dbfd);
     return 0;
