@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
     }
     printf("main:: READ EMPLOYEES OK!\n");
 
-    if (addstring)
+    if (employees != NULL && addstring)
     {
         printf("main::ADDSTRING: %s\n", addstring);
 
@@ -139,8 +139,17 @@ int main(int argc, char *argv[])
     }
     if (output_file(dbfd, header, employees) == STATUS_ERROR)
     {
+        free(header);
+        free(employees);
         close(dbfd);
         return -1;
+    }
+
+    if (header != NULL){
+        free(header);
+    }
+    if (employees != NULL){
+        free(header);
     }
     close(dbfd);
     return 0;
